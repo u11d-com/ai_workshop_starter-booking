@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Downloads a pinned lefthook release binary for the current OS/arch into
+# .bin/lefthook (gitignored). No Node/npm or package manager required.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+LEFTHOOK_VERSION="2.1.10"
+BIN_PATH=".bin/lefthook"
+
+mkdir -p .bin
+
+if [ -x "$BIN_PATH" ] && "$BIN_PATH" version >/dev/null 2>&1; then
+  echo "    lefthook already installed at $BIN_PATH"
+  exit 0
+fi
+
+os="$(uname -s)"
+arch="$(uname -m)"
+
+case "$os" in
+  Darwin) os_name="MacOS" ;;
+  Linux) os_name="Linux" ;;
+  *)
+    echo "error: unsupported OS for lefthook auto-install: $os" >&2
+    echo "       install lefthook manually (https://github.com/evilmartians/lefthook) and re-run bin/setup." >&2
+    exit 1
+    ;;
+esac
+
+case "$arch" in
+  arm64|aarch64) arch_name="arm64" ;;
+  x86_64|amd64) arch_name="x86_64" ;;
+  *)
+    echo "error: unsupported architecture for lefthook auto-install: $arch" >&2
+    exit 1
+    ;;
+esac
+
+url="https://github.com/evilmartians/lefthook/releases/download/v${LEFTHOOK_VERSION}/lefthook_${LEFTHOOK_VERSION}_${os_name}_${arch_name}.gz"
+
+echo "    Downloading lefthook v${LEFTHOOK_VERSION} (${os_name}/${arch_name})"
+curl -sSfL "$url" | gunzip > "$BIN_PATH"
+chmod +x "$BIN_PATH"
+
+"$BIN_PATH" version

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+echo "==> Building and starting containers"
+docker compose up -d --build
+
+echo "==> Waiting for postgres"
+until docker compose exec -T postgres pg_isready -U booking -d booking >/dev/null 2>&1; do
+  sleep 1
+done
+
+echo "==> Installing backend dependencies (composer)"
+docker compose exec -T php composer install
+
+echo "==> Running migrations (phinx)"
+docker compose exec -T php vendor/bin/phinx migrate
+
+echo "==> Installing frontend dependencies (npm)"
+docker compose exec -T node npm ci
+
+echo "==> Installing git hooks (lefthook)"
+bin/_install-lefthook
+git config core.hooksPath .githooks
+
+echo "==> Checking backend health"
+for i in $(seq 1 20); do
+  if curl -sf http://localhost:8080/api/health >/dev/null; then
+    echo "    backend OK"
+    break
+  fi
+  sleep 1
+done
+
+echo
+echo "Setup complete."
+echo "  Frontend: http://localhost:5173"
+echo "  Backend:  http://localhost:8080/api/health"

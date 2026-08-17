@@ -1,0 +1,29 @@
+pre-commit:
+  parallel: true
+  commands:
+    php-format:
+      glob: 'backend/**/*.php'
+      run: bin/fmt {staged_files}
+      stage_fixed: true
+    php-analyse:
+      glob: 'backend/**/*.php'
+      run: bin/analyse
+    php-tests:
+      glob: 'backend/**/*.php'
+      run: bin/test
+    frontend-format:
+      glob: 'frontend/**/*.{ts,vue,js}'
+      run: bin/fmt-fe {staged_files}
+      stage_fixed: true
+    frontend-lint:
+      glob: 'frontend/**/*.{ts,vue,js}'
+      run: bin/lint-fe
+    frontend-typecheck:
+      glob: 'frontend/**/*.{ts,vue}'
+      run: bin/typecheck
+    frontend-tests:
+      glob: 'frontend/**/*.{ts,vue}'
+      run: bin/test-fe
+
+
+assert_lefthook_installed: true

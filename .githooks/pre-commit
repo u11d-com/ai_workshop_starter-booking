@@ -1,0 +1,16 @@
+#!/bin/sh
+# Versioned git hook: runs lefthook from a repo-local binary (installed by
+# bin/setup into .bin/lefthook), so no Node/npm or global package manager is
+# required on the host just to run git hooks.
+set -e
+
+repo_root="$(git rev-parse --show-toplevel)"
+lefthook_bin="$repo_root/.bin/lefthook"
+
+if [ ! -x "$lefthook_bin" ]; then
+  echo "error: lefthook binary not found at $lefthook_bin" >&2
+  echo "       Run 'bin/setup' to install it." >&2
+  exit 1
+fi
+
+exec "$lefthook_bin" run pre-commit "$@"

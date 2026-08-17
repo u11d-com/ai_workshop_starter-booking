@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source "$(dirname "$0")/_guard"
+_require_service node
+
+# Paths are given relative to the repo root; the node container's workdir is
+# ./frontend, so strip that prefix before passing paths through. Default to
+# the whole project when called with no arguments.
+args=()
+for arg in "$@"; do
+  args+=("${arg#frontend/}")
+done
+if [ "${#args[@]}" -eq 0 ]; then
+  args=(".")
+fi
+
+docker compose exec -T node npx prettier --write "${args[@]}"

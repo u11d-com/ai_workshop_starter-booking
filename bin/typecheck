@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source "$(dirname "$0")/_guard"
+_require_service node
+docker compose exec -T node npm run typecheck -- "$@"

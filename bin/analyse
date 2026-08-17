@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source "$(dirname "$0")/_guard"
+_require_service php
+docker compose exec -T php vendor/bin/phpstan analyse --memory-limit=512M "$@"

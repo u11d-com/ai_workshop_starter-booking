@@ -1,0 +1,8 @@
+{
+  "php.validate.executablePath": "bin/php-vscode",
+  "intelephense.environment.includePaths": ["backend/vendor"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.workingDirectories": ["frontend"],
+  "typescript.tsdk": "frontend/node_modules/typescript/lib"
+}

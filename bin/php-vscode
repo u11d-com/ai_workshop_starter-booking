@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Wrapper so VSCode's built-in PHP validator (php.validate.executablePath)
+# can run the `php` binary inside the `php` container instead of needing
+# one installed on the host. VSCode invokes this with a host-absolute path
+# to the file being linted; we translate that into the container's path
+# (the php container's workdir is ./backend, mounted at /app) and exec
+# `php` there via `docker compose exec`.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$repo_root"
+
+args=()
+for arg in "$@"; do
+  case "$arg" in
+    "$repo_root/backend/"*)
+      args+=("/app/${arg#"$repo_root"/backend/}")
+      ;;
+    *)
+      args+=("$arg")
+      ;;
+  esac
+done
+
+exec docker compose exec -T php php "${args[@]}"

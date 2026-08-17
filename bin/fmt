@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source "$(dirname "$0")/_guard"
+_require_service php
+
+# Paths are given relative to the repo root; the php container's workdir is
+# ./backend, so strip that prefix before passing paths through.
+args=()
+for arg in "$@"; do
+  args+=("${arg#backend/}")
+done
+
+docker compose exec -T php vendor/bin/php-cs-fixer fix "${args[@]}"

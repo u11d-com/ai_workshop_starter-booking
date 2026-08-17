@@ -22,5 +22,17 @@ Windows). All runtime commands go through thin `bin/` wrapper scripts that
   analysis — so editor tooling works with zero host PHP install.
 - Formatters, tests, and migrations must always be invoked via `bin/` wrappers,
   never directly; `opencode.json` and `AGENTS.md` wire agents to those wrappers.
+- VSCode's *built-in* PHP validator (separate from Intelephense) does want a
+  host-executable `php` binary. Rather than disable it, `bin/php-vscode`
+  wraps `docker compose exec` and translates the host file path into the
+  container's, and `.vscode/settings.json` points `php.validate.executablePath`
+  at it — so any tool expecting a local `php` executable can be pointed at
+  the same wrapper pattern.
 - On Windows, the repo must be cloned inside the WSL2 filesystem (not `/mnt/c`)
   or bind-mount file watching and performance degrade badly.
+- Git hooks are the one thing that must run directly on the host (git invokes
+  them outside any container). `lefthook` is installed as a standalone binary
+  downloaded by `bin/_install-lefthook` into `.bin/` — not as an npm
+  devDependency — specifically to avoid pulling in a host Node/npm
+  requirement for something that's otherwise pure Docker + bash. A versioned
+  `.githooks/pre-commit` script (wired via `core.hooksPath`) invokes it.

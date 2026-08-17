@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "formatter": {
+    "php-cs-fixer": {
+      "command": ["bin/fmt", "{file}"],
+      "extensions": [".php"]
+    },
+    "prettier": {
+      "command": ["bin/fmt-fe", "{file}"],
+      "extensions": [".ts", ".vue", ".js", ".css", ".html", ".json"]
+    }
+  }
+}

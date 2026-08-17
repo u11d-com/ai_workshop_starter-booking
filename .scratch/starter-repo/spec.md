@@ -35,7 +35,7 @@ booking domain entirely unbuilt.
 | 13 | **Tailwind 4 + shadcn-vue** preinstalled, 1–2 components used in slice | Tailwind-only (participants add shadcn via agent) | Component setup is boilerplate, not instructive; ready pattern beats exercise |
 | 14 | **TypeScript** frontend, `vue-tsc` type check in verification | Plain JS | Matches modern stacks; stricter agent feedback loop |
 | 15 | **Strict modern PHP**: `declare(strict_types=1)`, full type coverage, enums/readonly/promotion; **PHPStan level max** + php-cs-fixer `@PER-CS` + strict rules | Looser levels | Greenfield — no legacy excuse; max is achievable from day one and agents handle strictness fine |
-| 16 | **lefthook** pre-commit hooks (installed as npm devDependency, `lefthook install` in `bin/setup`): format + lint + PHPStan + vue-tsc + unit tests, run in parallel | Husky (npm-centric), no hooks | Language-agnostic Go binary, zero extra install via npm; keeps commits aligned with rules. Unit tests fast enough in parallel; browser/e2e tests excluded from hooks |
+| 16 | **lefthook** pre-commit hooks, installed as a standalone binary downloaded by `bin/_install-lefthook` (not an npm devDependency) into `.bin/`, wired via a versioned `.githooks/pre-commit` script (`core.hooksPath`): format + lint + PHPStan + vue-tsc + unit tests, run in parallel | npm devDependency + `lefthook install` (pulls in a host Node dependency for one binary); Husky (npm-centric); no hooks | Go binary, no host Node/npm required at all — matches the "runtime only in containers" principle; keeps commits aligned with rules. Unit tests fast enough in parallel; browser/e2e tests excluded from hooks |
 
 ## Repo structure
 
@@ -43,8 +43,10 @@ booking domain entirely unbuilt.
 ai_workshop-booking/
 ├── docker-compose.yml          # services: php, node, postgres
 ├── lefthook.yml                # pre-commit: fmt + lint + phpstan + vue-tsc + unit tests (parallel)
+├── .githooks/pre-commit        # versioned hook script, execs .bin/lefthook (core.hooksPath)
 ├── bin/
-│   ├── setup                   # compose up → composer install → npm install → lefthook install → migrate → curl health
+│   ├── setup                   # compose up → composer install → npm ci → lefthook binary → migrate → curl health
+│   ├── _install-lefthook       # downloads pinned lefthook release binary into .bin/ (no npm)
 │   ├── php, composer, npm      # docker compose exec wrappers
 │   ├── phinx, psql
 │   ├── test, test-fe           # phpunit / vitest
