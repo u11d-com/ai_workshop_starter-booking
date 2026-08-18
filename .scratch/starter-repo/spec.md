@@ -1,6 +1,6 @@
 # Spec: Workshop starter repo (`u11d-com/ai_workshop-booking`)
 
-Status: ready-for-agent
+Status: done
 
 > Meta note: this spec describes the *starter repo itself* — the artifact handed to
 > workshop participants. It is intentionally left visible in the template so
@@ -97,3 +97,21 @@ From a clean clone: `bin/setup` → open `localhost:5173`, see the resource list
 `bin/test`, `bin/test-fe`, `bin/analyse`, `bin/typecheck` pass → a test commit
 triggers lefthook and passes. Must be verified on macOS and Windows+WSL2
 before the workshop.
+
+## Comments
+
+Implementation complete. `bin/setup` runs clean end-to-end (docker
+presence/running checks, compose up, composer install, migrations, npm ci,
+lefthook binary install, health check); the full check suite (`bin/test`,
+`bin/analyse` — PHPStan max, `bin/typecheck`, `bin/test-fe`, `bin/lint-fe`,
+`bin/fmt`, `bin/fmt-fe`) passes; a real `git commit` exercises the
+`.githooks/pre-commit` → `.bin/lefthook` hook chain successfully. Frontend
+uses the real `shadcn-vue` CLI output (not hand-rolled components). Host
+requires only Docker, bash, and git — no PHP or Node needed on the host
+itself (see `docs/adr/0001-hybrid-docker-topology.md` for the full
+rationale, including the standalone lefthook binary and the
+`bin/php-vscode` wrapper for VSCode's built-in PHP validator).
+
+Still outstanding before the actual workshop: a real dry run on
+Windows+WSL2 (only macOS has been exercised so far in this environment).
+

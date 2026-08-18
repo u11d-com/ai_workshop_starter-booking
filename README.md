@@ -9,7 +9,9 @@ with the help of an AI coding agent.
 
 - **Backend**: bare PHP 8.3+, PSR-4 autoloading via Composer, a hand-rolled
   router, PDO + Postgres, Phinx migrations.
-- **Frontend**: Vue 3 + TypeScript + Vite, Tailwind 4 + shadcn-vue.
+- **Frontend**: Vue 3 + TypeScript + Vite, Tailwind 4 + shadcn-vue
+  (components generated via the `shadcn-vue` CLI, using `reka-ui` under the
+  hood for interactive ones).
 - **Runtime**: Docker Compose (`php`, `node`, `postgres`). Your code lives on
   the host; only the runtime is containerized.
 

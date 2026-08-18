@@ -40,6 +40,15 @@ Backend lives in `backend/` (bare PHP 8.3+, PSR-4 `App\`, Postgres via PDO,
 Phinx migrations). Frontend lives in `frontend/` (Vue 3 + TypeScript + Vite,
 Tailwind 4 + shadcn-vue, proxying `/api` to the PHP container).
 
+To add a UI component, use the `shadcn-vue` CLI (`bin/npm exec shadcn-vue add
+<component>` from `frontend/`) — don't hand-roll components under
+`components/ui/`. It generates styled Vue components (Tailwind + `cva`
+variants) into `frontend/src/components/ui/<name>/`. Interactive components
+(dialog, dropdown, popover, etc.) use `reka-ui` underneath for behavior
+(focus trap, ARIA, positioning); simple presentational ones (Card, Table) are
+plain markup styled via `cn()`. `reka-ui` is a dependency the generated code
+uses, not a tool you invoke directly.
+
 A pre-commit hook (lefthook) runs formatting, PHPStan, vue-tsc, and unit tests
 on staged files automatically — see `lefthook.yml`. If containers aren't
 running, the `bin/` scripts fail with a clear message telling you to run

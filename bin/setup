@@ -2,6 +2,25 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+if ! command -v docker >/dev/null 2>&1; then
+  echo "error: 'docker' not found on the host." >&2
+  echo "       Install Docker Desktop (macOS) or Docker Engine + Compose (WSL2/Linux)" >&2
+  echo "       and make sure it's running, then re-run bin/setup." >&2
+  exit 1
+fi
+
+if ! docker compose version >/dev/null 2>&1; then
+  echo "error: 'docker compose' is not available." >&2
+  echo "       Install/update Docker to a version that includes the Compose plugin." >&2
+  exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  echo "error: Docker is installed but not running (or not reachable)." >&2
+  echo "       Start Docker Desktop / the Docker daemon, then re-run bin/setup." >&2
+  exit 1
+fi
+
 echo "==> Building and starting containers"
 docker compose up -d --build
 
@@ -36,3 +55,6 @@ echo
 echo "Setup complete."
 echo "  Frontend: http://localhost:5173"
 echo "  Backend:  http://localhost:8080/api/health"
+echo
+echo "To tear everything down (containers, volumes, and the Postgres data):"
+echo "  docker compose down -v"
